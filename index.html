@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roda a Roda</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&display=swap">
+<style>
+:root{--bg:#1b3fb5;--fg:#fff;--card:#14307f;--mut:#c9d6ff;--ac:#ffc82c;--acfg:#2b1b00;--blank:#2c58d6;--tile:#fff;--tilefg:#14307f;--key:#fff;--keyfg:#14307f;--bad:#d7263d;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1a52;--card:#08123a;--blank:#18307f;--mut:#9fb2ee}}
+:root[data-theme="dark"]{--bg:#0c1a52;--card:#08123a;--blank:#18307f;--mut:#9fb2ee}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--fg);font:16px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:460px;margin:0 auto;padding:12px 12px 24px}
+h1{font:400 26px/1 "Bowlby One",Impact,sans-serif;text-align:center;margin:4px 0 12px;color:var(--ac);letter-spacing:.5px}
+.pls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pl{background:var(--card);border:3px solid transparent;border-radius:10px;padding:8px 10px}
+.pl.on{border-color:var(--ac)}
+.pl b{display:block;font-size:14px;color:var(--mut);font-weight:600}
+.pl span{font:400 24px/1.1 "Bowlby One",Impact,sans-serif}
+.cat{margin:14px 0 6px;text-align:center;color:var(--mut);font-size:14px}
+.cat strong{color:var(--ac);font-size:17px}
+.board{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--card);border-radius:10px;padding:12px 8px;min-height:90px}
+.w{display:flex;gap:3px;max-width:100%}
+.t{flex:none;width:var(--ts,26px);height:calc(var(--ts,26px)*1.3);border-radius:4px;background:var(--blank);display:grid;place-items:center;font-family:"Bowlby One",Impact,sans-serif;font-weight:400;font-size:calc(var(--ts,26px)*.68);line-height:1;color:var(--tilefg)}
+.t.on{background:var(--tile)}
+.wheel{position:relative;width:min(80vw,300px);aspect-ratio:1;margin:16px auto 8px}
+canvas{width:100%;height:100%;display:block}
+.ptr{position:absolute;left:50%;top:-8px;margin-left:-13px;width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:26px solid var(--ac);filter:drop-shadow(0 2px 0 rgba(0,0,0,.4))}
+.msg{min-height:44px;text-align:center;font-weight:600;padding:4px 6px}
+.row{display:flex;gap:8px;margin:6px 0}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.big{flex:1;padding:13px 8px;font-weight:800;background:var(--ac);color:var(--acfg)}
+.big.sec{background:var(--card);color:var(--fg)}
+.big:disabled{opacity:.4;cursor:default}
+.kb{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.kb button{min-height:42px;background:var(--key);color:var(--keyfg);font-weight:800;font-size:17px}
+.kb button.v{background:var(--ac);color:var(--acfg)}
+.kb button:disabled{opacity:.3;cursor:default}
+.hint{text-align:center;color:var(--mut);font-size:13px;margin-top:8px}
+.sv{display:none;gap:8px;margin:6px 0}
+.sv.show{display:flex}
+.sv input{flex:1;min-width:0;padding:11px;border-radius:8px;border:0;font:inherit;text-transform:uppercase}
+.t.pk{color:rgba(255,255,255,.5)}
+.dbg{margin-top:16px;background:var(--card);border-radius:10px;padding:10px}
+.dbg summary{cursor:pointer;font-weight:700;color:var(--ac)}
+.dbg .g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.dbg button{padding:10px 6px;background:var(--key);color:var(--keyfg);font-weight:700;font-size:14px}
+.dbg input,.dbg select{min-width:0;padding:9px;border-radius:8px;border:0;font:inherit}
+.dbg .full{grid-column:1/-1}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<main>
+<h1>RODA A RODA</h1>
+<div class="row" style="margin:0 0 10px"><button class="big sec" id="bMus" style="padding:9px 6px;font-size:14px">Música: desligada</button><button class="big sec" id="bSfx" style="padding:9px 6px;font-size:14px">Efeitos: ligados</button></div>
+<div class="pls" id="pls"></div>
+<div class="cat" id="cat"></div>
+<div class="board" id="board"></div>
+<div class="wheel"><div class="ptr"></div><canvas id="cv"></canvas></div>
+<div class="msg" id="msg" aria-live="polite"></div>
+<div class="row"><button class="big" id="spin">Girar a roda</button><button class="big sec" id="solve">Resolver</button></div>
+<div class="sv" id="sv"><input id="ans" placeholder="Todas as palavras, em qualquer ordem" autocomplete="off"><button class="big" id="ok" style="flex:none">Confirmar</button></div>
+<div class="row"><button class="big" id="next" style="display:none"></button></div>
+<div class="kb" id="kb"></div>
+<div class="hint">Consoantes: gire e escolha. Vogais custam 250 pontos. Resolver certo vale 500 de bônus. Casas especiais: VOGAL (vogal grátis), x2 (dobra seus pontos) e +500 (bônus).</div>
+<details class="dbg"><summary>Modo teste</summary>
+<div class="g">
+<button id="dPeek" class="full">Espiar palavra: desligado</button>
+<button id="dRev">Revelar palavras</button>
+<button id="dSkip">Pular rodada</button>
+<button id="dPass">Passar a vez</button>
+<button id="dP1">+1000 pontos</button>
+<button id="dZero" class="full">Zerar jogador atual</button>
+<select id="dSeg" class="full"></select>
+<button id="dForce" class="full">Girar até a casa escolhida</button>
+<input id="dCat" placeholder="Dica (categoria)">
+<input id="dW" placeholder="Palavras (separe por espaço)">
+<button id="dSet" class="full">Usar essas palavras agora</button>
+<button id="dReset" class="full">Reiniciar partida</button>
+</div></details>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const norm=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const VOW="AEIOU",ALF="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const FR=[["Frutas",["ABACAXI","MARACUJÁ","JABUTICABA","MORANGO","GOIABA","TANGERINA"]],["Animais",["BEIJA-FLOR","TATU-BOLA","JACARÉ","TAMANDUÁ","CAPIVARA","ARARA"]],["Instrumentos",["CAVAQUINHO","SANFONA","PANDEIRO","VIOLÃO","TAMBORIM","ZABUMBA"]],["Doces",["BRIGADEIRO","BEIJINHO","PÉ-DE-MOLEQUE","PAÇOCA","QUINDIM","CAJUZINHO"]],["Dentro de casa",["GUARDA-ROUPA","LIQUIDIFICADOR","GELADEIRA","VENTILADOR","SOFÁ","TRAVESSEIRO"]],["Cidades brasileiras",["FLORIANÓPOLIS","CURITIBA","SALVADOR","BELÉM","FORTALEZA","GOIÂNIA"]],["Esportes",["FUTEBOL","VOLEIBOL","NATAÇÃO","BASQUETE","HANDEBOL","CICLISMO"]]];
+const CORES=["#d7263d","#1f8a4c","#ffc82c","#7b3fc4","#f26b1d","#1aa0d8"];
+const SPECIAL={PASSA:["PASSA","#6b7280","#fff"],PERDEU:["PERDEU","#111111","#fff"],VOGAL:["VOGAL","#0e9f8e","#fff"],DOBRO:["x2","#e0457b","#fff"],BONUS:["+500","#ffb000","#2b1b00"]};
+const ORD=[300,"PASSA",800,150,"VOGAL",500,1000,250,"PERDEU",100,700,"DOBRO",400,50,600,"BONUS",200,1500,350,900];
+const SEG=ORD.map((v,i)=>{const s=SPECIAL[v];if(s)return{v,l:s[0],c:s[1],t:s[2]};const c=CORES[i%CORES.length];return{v,l:String(v),c,t:c==="#ffc82c"?"#2b1b00":"#fff"}});
+const lite=(c,p)=>{const n=parseInt(c.slice(1),16),m=x=>Math.round(x+(255-x)*p);return `rgb(${m(n>>16)},${m(n>>8&255)},${m(n&255)})`};
+const cv=$("cv"),ctx=cv.getContext("2d");
+let G,PEEK=false;
+function msg(t){G.m=t;$("msg").textContent=t}
+function init(){
+  const gs=[...FR].sort(()=>Math.random()-.5).slice(0,3);
+  const R=gs.map(([cat,ws])=>({cat,words:[...ws].sort(()=>Math.random()-.5).slice(0,3+(Math.random()*2|0))}));
+  G={r:0,k:0,n:0,R,p:[{n:"Jogador 1",s:0},{n:"Jogador 2",s:0}],cur:0,ph:"spin",val:0,rev:new Set(),used:new Set(),rot:0,m:""};
+  newWord();
+}
+function newWord(){
+  G.rev=new Set();G.used=new Set();G.cur=G.n%2;G.ph="spin";G.val=0;
+  msg("Rodada "+(G.r+1)+" de 3, com "+G.R[G.r].words.length+" palavras. Vez de "+G.p[G.cur].n+": gire a roda!");
+  render();
+}
+const phrase=()=>G.R[G.r].words.join(" ");
+const letters=()=>[...new Set(norm(phrase()).replace(/[^A-Z]/g,""))];
+function render(){
+  $("pls").innerHTML=G.p.map((p,i)=>`<div class="pl ${i===G.cur&&G.ph!=="over"?"on":""}"><b>${p.n}</b><span>${p.s}</span></div>`).join("");
+  $("cat").innerHTML=`Rodada ${G.r+1} de 3 · ${G.R[G.r].words.length} palavras<br>Dica: <strong>${G.R[G.r].cat}</strong>`;
+  {const av=($("board").clientWidth||300)-16,n=Math.max(...G.R[G.r].words.map(w=>w.length));$("board").style.setProperty("--ts",Math.max(16,Math.min(30,Math.floor((av-(n-1)*3)/n)))+"px")}
+  $("board").innerHTML=phrase().split(" ").map(w=>`<div class="w">${[...w].map(ch=>{const n=norm(ch),show=G.rev.has(n)||!/[A-Z]/.test(n);return `<span class="t ${show?"on":(PEEK?"pk":"")}">${show||PEEK?ch:""}</span>`}).join("")}</div>`).join("");
+  const sc=G.p[G.cur].s;
+  $("kb").innerHTML=[...ALF].map(l=>{const v=VOW.includes(l);const dis=G.used.has(l)||(v?(G.ph==="vogal"?false:(G.ph!=="spin"||sc<250)):G.ph!=="letter");return `<button data-l="${l}" class="${v?"v":""}" ${dis?"disabled":""}>${l}</button>`}).join("");
+  $("spin").disabled=G.ph!=="spin";
+  $("solve").disabled=G.ph!=="spin";
+  $("next").style.display=G.ph==="over"?"block":"none";
+  if(G.ph!=="spin")$("sv").classList.remove("show");
+  draw();
+}
+function draw(){
+  const s=cv.clientWidth||300,d=window.devicePixelRatio||1;
+  cv.width=s*d;cv.height=s*d;
+  ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,s,s);
+  const R=s/2-14,a=2*Math.PI/SEG.length;
+  ctx.save();ctx.translate(s/2,s/2);
+  ctx.beginPath();ctx.arc(0,0,s/2-2,0,7);ctx.fillStyle="#7a1420";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="#ffc82c";ctx.stroke();
+  for(let i=0;i<24;i++){const t=i/24*2*Math.PI;ctx.beginPath();ctx.arc(Math.cos(t)*(s/2-8),Math.sin(t)*(s/2-8),s/90+1.5,0,7);ctx.fillStyle=(i+Math.floor(G.rot*3))%2?"#fff3b0":"#ffb000";ctx.fill()}
+  ctx.restore();
+  ctx.save();ctx.translate(s/2,s/2);ctx.rotate(G.rot);
+  SEG.forEach((g,i)=>{
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,i*a,(i+1)*a);ctx.closePath();
+    const gr=ctx.createRadialGradient(0,0,R*.12,0,0,R);gr.addColorStop(0,lite(g.c,.4));gr.addColorStop(1,g.c);ctx.fillStyle=gr;ctx.fill();ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=1.5;ctx.stroke();
+    ctx.save();ctx.rotate((i+.5)*a);ctx.textAlign="right";ctx.fillStyle=g.t;
+    ctx.font=`800 ${g.l.length>4?s/26:g.l.length>3?s/22:s/19}px system-ui,sans-serif`;ctx.textBaseline="middle";ctx.fillText(g.l,R-10,0);ctx.restore();
+  });
+  ctx.beginPath();ctx.arc(0,0,s/13,0,7);ctx.fillStyle="#ffc82c";ctx.fill();ctx.beginPath();ctx.arc(0,0,s/22,0,7);ctx.fillStyle="#fff";ctx.fill();
+  ctx.restore();
+}
+function next(){
+  G.cur=1-G.cur;G.ph="spin";G.val=0;
+  msg("Vez de "+G.p[G.cur].n+".");render();
+}
+function spin(f){
+  if(G.ph!=="spin")return;
+  G.ph="anim";render();$("spin").disabled=true;
+  const a=2*Math.PI/SEG.length,idx=typeof f==="number"?f:Math.random()*SEG.length|0;
+  const target=-Math.PI/2-(idx+.5)*a,base=G.rot;
+  const delta=(((target-base)%(2*Math.PI))+2*Math.PI)%(2*Math.PI)+2*Math.PI*(5+(Math.random()*3|0));
+  const t0=performance.now(),dur=4200;let lastSeg=-1;
+  const ease=x=>1-Math.pow(1-x,3);
+  (function step(now){
+    const x=Math.min(1,(now-t0)/dur);
+    G.rot=base+delta*ease(x);draw();
+    const si=Math.floor((((-Math.PI/2-G.rot)%(2*Math.PI))+2*Math.PI)%(2*Math.PI)/a);
+    if(si!==lastSeg){lastSeg=si;tone(1000-x*450,.03,.05)}
+    if(x<1)return requestAnimationFrame(step);
+    const g=SEG[idx];
+    if(g.v==="PASSA"){sfx("passa");msg("Passa a vez!");next()}
+    else if(g.v==="PERDEU"){sfx("perdeu");G.p[G.cur].s=0;msg("Perdeu tudo! "+G.p[G.cur].n+" volta a zero.");next()}
+    else if(g.v==="VOGAL"){sfx("vitoria");if(VOW.split("").every(x=>G.used.has(x))){msg("Vogal grátis, mas todas as vogais já saíram! Gire de novo.");G.ph="spin";render()}else{G.ph="vogal";msg("Vogal grátis! Escolha uma vogal sem pagar.");render()}}
+    else if(g.v==="DOBRO"){sfx("vitoria");G.p[G.cur].s*=2;G.ph="spin";msg("Dobrou! "+G.p[G.cur].n+" agora tem "+G.p[G.cur].s+". Gire de novo.");render()}
+    else if(g.v==="BONUS"){sfx("vitoria");G.p[G.cur].s+=500;G.ph="spin";msg("Bônus de 500 pontos! Gire de novo.");render()}
+    else{sfx("ding");G.val=g.v;G.ph="letter";msg("Vale "+g.v+" por letra. Escolha uma consoante.");render()}
+  })(t0);
+}
+function done(){return letters().every(l=>G.rev.has(l))}
+function pick(l){
+  const v=VOW.includes(l);
+  if(G.used.has(l)||(v&&G.ph!=="vogal"&&(G.ph!=="spin"||G.p[G.cur].s<250))||(!v&&G.ph!=="letter"))return;
+  G.used.add(l);
+  const n=[...norm(phrase())].filter(c=>c===l).length,p=G.p[G.cur];
+  if(v&&G.ph!=="vogal")p.s-=250;
+  if(n>0){
+    G.rev.add(l);sfx("acerto");
+    if(!v)p.s+=G.val*n;
+    G.ph="spin";
+    if(done()){return end(G.cur,false)}
+    msg(`Tem ${n} letra ${l}${v?"":" (+"+G.val*n+")"}. Continue: gire de novo ou resolva.`);render();
+  }else{sfx("erro");msg("Não tem a letra "+l+".");next()}
+}
+function end(w,bonus){
+  if(bonus)G.p[w].s+=500;
+  letters().forEach(l=>G.rev.add(l));
+  G.ph="over";sfx(bonus?"vitoria":"ding");
+  msg(bonus?G.p[w].n+" acertou e ganha 500 de bônus!":"Todas as letras apareceram!");
+  $("next").textContent=G.r<2?"Próxima rodada":"Ver resultado";
+  render();
+}
+$("spin").onclick=spin;
+$("solve").onclick=()=>{$("sv").classList.add("show");$("ans").value="";$("ans").focus()};
+$("ok").onclick=()=>{
+  const perms=a=>a.length<2?[a]:a.flatMap((x,i)=>perms([...a.slice(0,i),...a.slice(i+1)]).map(p=>[x,...p]));
+  const t=norm($("ans").value).toUpperCase().replace(/[^A-Z]/g,"");
+  if(!t)return;
+  const ws=G.R[G.r].words.map(w=>norm(w).replace(/[^A-Z]/g,""));
+  if(perms(ws).some(p=>p.join("")===t))end(G.cur,true);
+  else{msg("Errou! Digite todas as palavras, em qualquer ordem.");next()}
+};
+$("ans").addEventListener("keydown",e=>{if(e.key==="Enter")$("ok").click()});
+$("kb").onclick=e=>{const b=e.target.closest("button");if(b)pick(b.dataset.l)};
+$("next").onclick=()=>{
+  G.n++;
+  if(G.r<2){G.r++;newWord();return}
+  const [a,b]=G.p;
+  const w=a.s===b.s?"Empate!":(a.s>b.s?a.n:b.n)+" venceu!";
+  G.ph="final";$("next").textContent="Jogar de novo";
+  $("next").onclick=()=>{$("next").onclick=nextHandler;init()};
+  msg(w+" "+a.n+": "+a.s+" · "+b.n+": "+b.s);render();$("next").style.display="block";
+};
+const nextHandler=$("next").onclick;
+$("dSeg").innerHTML=SEG.map((g,i)=>`<option value="${i}">${g.l} (casa ${i+1})</option>`).join("");
+const busy=()=>G.ph==="anim"||G.ph==="final";
+$("dPeek").onclick=()=>{PEEK=!PEEK;$("dPeek").textContent="Espiar palavra: "+(PEEK?"ligado":"desligado");render()};
+$("dRev").onclick=()=>{if(busy()||G.ph==="over")return;end(G.cur,false)};
+$("dSkip").onclick=()=>{if(busy())return;if(G.ph!=="over")end(G.cur,false);$("next").click()};
+$("dPass").onclick=()=>{if(busy()||G.ph==="over")return;next()};
+$("dP1").onclick=()=>{G.p[G.cur].s+=1000;render()};
+$("dZero").onclick=()=>{G.p[G.cur].s=0;render()};
+$("dForce").onclick=()=>{if(G.ph==="spin")spin(+$("dSeg").value);else msg("Só dá para girar quando for a hora de girar.")};
+$("dSet").onclick=()=>{const w=$("dW").value.trim().toUpperCase();if(!w||busy())return;G.R[G.r]={cat:$("dCat").value.trim()||"Teste",words:w.split(/\s+/)};G.rev=new Set();G.used=new Set();G.ph="spin";G.val=0;msg("Palavras de teste definidas. Vez de "+G.p[G.cur].n+".");render()};
+$("dReset").onclick=()=>{$("next").onclick=nextHandler;init()};
+let AC=null,SFX=true,MUS=false,musT=null,ms=0;
+function ac(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume()}catch(e){}return AC}
+function note(f,d,ty,v,t0,mus){if(!(mus?MUS:SFX))return;const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+t0;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.02)}
+function tone(f,d,v){note(f,d,"square",v,0,false)}
+function sfx(k){
+  const S={ding:[[880,.12],[1320,.22,.1]],acerto:[[660,.1],[990,.2,.09]],erro:[[220,.3,0,"sawtooth"]],passa:[[500,.12],[350,.22,.12]],perdeu:[[400,.18,0,"sawtooth"],[300,.18,.18,"sawtooth"],[200,.4,.36,"sawtooth"]],vitoria:[[523,.12],[659,.12,.12],[784,.12,.24],[1047,.45,.36]]}[k]||[];
+  S.forEach(([f,d,t,ty])=>note(f,d,ty||"square",.06,t||0,false));
+}
+const MEL=[523,0,659,0,784,659,0,523,587,0,698,0,880,698,0,587],BAS=[131,0,196,0,131,0,196,0,147,0,220,0,147,0,220,0];
+function musicTick(){const i=ms++%16;if(MEL[i])note(MEL[i],.2,"triangle",.05,0,true);if(BAS[i])note(BAS[i],.22,"sine",.09,0,true)}
+function setMusic(on){MUS=on;clearInterval(musT);if(on){ac();musT=setInterval(musicTick,230)}$("bMus").textContent="Música: "+(on?"ligada":"desligada")}
+document.addEventListener("pointerdown",()=>ac());
+$("bMus").onclick=()=>setMusic(!MUS);
+$("bSfx").onclick=()=>{SFX=!SFX;$("bSfx").textContent="Efeitos: "+(SFX?"ligados":"desligados");sfx("ding")};
+document.addEventListener("visibilitychange",()=>{clearInterval(musT);if(!document.hidden&&MUS)musT=setInterval(musicTick,230)});
+window.addEventListener("resize",render);
+init();
+</script>
+</body>
+</html>
