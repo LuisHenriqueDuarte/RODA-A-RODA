@@ -16,17 +16,17 @@ body{background:var(--bg);color:var(--fg);font:16px/1.35 system-ui,-apple-system
 main{max-width:460px;margin:0 auto;padding:12px 12px 24px}
 h1{font:400 26px/1 "Bowlby One",Impact,sans-serif;text-align:center;margin:4px 0 12px;color:var(--ac);letter-spacing:.5px}
 .pls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pl{background:var(--card);border:3px solid transparent;border-radius:10px;padding:8px 10px}
+.pl{background:var(--card);border:3px solid transparent;border-radius:10px;padding:4px 8px}
 .pl.on{border-color:var(--ac)}
-.pl b{display:block;font-size:14px;color:var(--mut);font-weight:600}
-.pl span{font:400 24px/1.1 "Bowlby One",Impact,sans-serif}
-.cat{margin:14px 0 6px;text-align:center;color:var(--mut);font-size:14px}
+.pl b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:var(--mut);font-weight:600}
+.pl span{font:400 20px/1.1 "Bowlby One",Impact,sans-serif}
+.cat{margin:8px 0 6px;text-align:center;color:var(--mut);font-size:14px}
 .cat strong{color:var(--ac);font-size:17px}
-.board{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--card);border-radius:10px;padding:12px 8px;min-height:90px}
+.board{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card);border-radius:10px;padding:8px;min-height:60px}
 .w{display:flex;gap:3px;max-width:100%}
 .t{flex:none;width:var(--ts,26px);height:calc(var(--ts,26px)*1.3);border-radius:4px;background:var(--blank);display:grid;place-items:center;font-family:"Bowlby One",Impact,sans-serif;font-weight:400;font-size:calc(var(--ts,26px)*.68);line-height:1;color:var(--tilefg)}
 .t.on{background:var(--tile)}
-.wheel{position:relative;width:min(80vw,300px);aspect-ratio:1;margin:16px auto 8px}
+.wheel{position:relative;width:min(62vw,34vh,280px);aspect-ratio:1;margin:14px auto 8px}
 canvas{width:100%;height:100%;display:block}
 .ptr{position:absolute;left:50%;top:-8px;margin-left:-13px;width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:26px solid var(--ac);filter:drop-shadow(0 2px 0 rgba(0,0,0,.4))}
 .msg{min-height:44px;text-align:center;font-weight:600;padding:4px 6px}
@@ -36,8 +36,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-off
 .big{flex:1;padding:13px 8px;font-weight:800;background:var(--ac);color:var(--acfg)}
 .big.sec{background:var(--card);color:var(--fg)}
 .big:disabled{opacity:.4;cursor:default}
-.kb{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
-.kb button{min-height:42px;background:var(--key);color:var(--keyfg);font-weight:800;font-size:17px}
+.kb{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:4px}
+.kb button{min-height:40px;background:var(--key);color:var(--keyfg);font-weight:800;font-size:17px}
 .kb button.v{background:var(--ac);color:var(--acfg)}
 .kb button:disabled{opacity:.3;cursor:default}
 .hint{text-align:center;color:var(--mut);font-size:13px;margin-top:8px}
@@ -45,6 +45,30 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-off
 .sv.show{display:flex}
 .sv input{flex:1;min-width:0;padding:11px;border-radius:8px;border:0;font:inherit;text-transform:uppercase}
 .t.pk{color:rgba(255,255,255,.5)}
+[hidden]{display:none!important}
+.badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;background:rgba(8,18,58,.92);border:3px solid var(--ac);border-radius:16px;padding:8px 14px;text-align:center;color:#fff;transition:transform .25s,opacity .25s;white-space:nowrap}
+.badge.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.badge small{display:block;font-size:12px;font-weight:700;color:var(--ac);text-transform:uppercase}
+.badge b{font:400 34px/1.05 "Bowlby One",Impact,sans-serif}
+.valbar{text-align:center;font:400 22px/1.1 "Bowlby One",Impact,sans-serif;color:var(--ac);margin:4px 0 8px;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+#game h1{display:none}
+#stage{display:grid}
+#stage>div{grid-area:1/1}
+.off{visibility:hidden;pointer-events:none}
+#pWheel .big{font-size:14px;padding:12px 4px}
+.home{text-align:center;padding-top:14px}
+.dot{width:110px;height:110px;border-radius:50%;margin:0 auto 16px;border:6px solid #7a1420;box-shadow:0 0 0 3px var(--ac);background:conic-gradient(#d7263d 0 12.5%,#ffc82c 0 25%,#1f8a4c 0 37.5%,#7b3fc4 0 50%,#f26b1d 0 62.5%,#1aa0d8 0 75%,#ffb000 0 87.5%,#6b7280 0);animation:sp 12s linear infinite}
+@keyframes sp{to{transform:rotate(1turn)}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+.logo{font:400 44px/1 "Bowlby One",Impact,sans-serif;color:var(--ac);text-shadow:0 3px 0 rgba(0,0,0,.35)}
+.sub{color:var(--mut);margin:8px 0 22px}
+.lbl{font-weight:700;margin:16px 0 8px}
+.cnt{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cnt button{padding:14px 0;background:var(--card);color:var(--fg);font:400 24px/1 "Bowlby One",Impact,sans-serif;border:3px solid transparent}
+.cnt button.sel{background:var(--ac);color:var(--acfg);border-color:#fff}
+.names{display:grid;gap:8px}
+.names input{padding:13px;border-radius:8px;border:0;font:inherit;font-size:17px;text-align:center}
+#go{width:100%;margin-top:22px;font-size:18px;padding:16px}
 .dbg{margin-top:16px;background:var(--card);border-radius:10px;padding:10px}
 .dbg summary{cursor:pointer;font-weight:700;color:var(--ac)}
 .dbg .g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
@@ -56,17 +80,36 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-off
 </head>
 <body>
 <main>
+<section id="home" class="home">
+<div class="dot"></div>
+<div class="logo">RODA A RODA</div>
+<p class="sub">O jogo de palavras da roleta</p>
+<div class="lbl">Quantos jogadores?</div>
+<div class="cnt" id="cnt"></div>
+<div class="lbl">Nome dos jogadores</div>
+<div class="names" id="names"></div>
+<button class="big" id="go">Começar o jogo</button>
+</section>
+<div id="game" hidden>
 <h1>RODA A RODA</h1>
-<div class="row" style="margin:0 0 10px"><button class="big sec" id="bMus" style="padding:9px 6px;font-size:14px">Música: desligada</button><button class="big sec" id="bSfx" style="padding:9px 6px;font-size:14px">Efeitos: ligados</button></div>
+<div class="row" style="margin:0 0 10px"><button class="big sec" id="bHome" style="padding:9px 6px;font-size:14px">Início</button><button class="big sec" id="bMus" style="padding:9px 6px;font-size:14px">Música: desligada</button><button class="big sec" id="bSfx" style="padding:9px 6px;font-size:14px">Efeitos: ligados</button></div>
 <div class="pls" id="pls"></div>
 <div class="cat" id="cat"></div>
 <div class="board" id="board"></div>
-<div class="wheel"><div class="ptr"></div><canvas id="cv"></canvas></div>
 <div class="msg" id="msg" aria-live="polite"></div>
-<div class="row"><button class="big" id="spin">Girar a roda</button><button class="big sec" id="solve">Resolver</button></div>
+<div id="stage">
+<div id="pWheel">
+<div class="wheel"><div class="ptr"></div><canvas id="cv"></canvas><div class="badge" id="badge"></div></div>
+<div class="row"><button class="big" id="spin">Girar a roda</button><button class="big sec" id="buy">Comprar vogal</button><button class="big sec" id="solve">Resolver</button></div>
 <div class="sv" id="sv"><input id="ans" placeholder="Todas as palavras, em qualquer ordem" autocomplete="off"><button class="big" id="ok" style="flex:none">Confirmar</button></div>
 <div class="row"><button class="big" id="next" style="display:none"></button></div>
+</div>
+<div id="pKb" class="off">
+<div class="valbar" id="valBar"></div>
 <div class="kb" id="kb"></div>
+<div class="row"><button class="big sec" id="back">Voltar à roda</button></div>
+</div>
+</div>
 <div class="hint">Consoantes: gire e escolha. Vogais custam 250 pontos. Resolver certo vale 500 de bônus. Casas especiais: VOGAL (vogal grátis), x2 (dobra seus pontos) e +500 (bônus).</div>
 <details class="dbg"><summary>Modo teste</summary>
 <div class="g">
@@ -78,17 +121,20 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-off
 <button id="dZero" class="full">Zerar jogador atual</button>
 <select id="dSeg" class="full"></select>
 <button id="dForce" class="full">Girar até a casa escolhida</button>
+<select id="dCatSel" class="full"></select>
+<button id="dCatGo" class="full">Sortear palavras dessa categoria</button>
 <input id="dCat" placeholder="Dica (categoria)">
 <input id="dW" placeholder="Palavras (separe por espaço)">
 <button id="dSet" class="full">Usar essas palavras agora</button>
 <button id="dReset" class="full">Reiniciar partida</button>
 </div></details>
+</div>
 </main>
 <script>
 const $=id=>document.getElementById(id);
 const norm=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const VOW="AEIOU",ALF="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const FR=[["Frutas",["ABACAXI","MARACUJÁ","JABUTICABA","MORANGO","GOIABA","TANGERINA"]],["Animais",["BEIJA-FLOR","TATU-BOLA","JACARÉ","TAMANDUÁ","CAPIVARA","ARARA"]],["Instrumentos",["CAVAQUINHO","SANFONA","PANDEIRO","VIOLÃO","TAMBORIM","ZABUMBA"]],["Doces",["BRIGADEIRO","BEIJINHO","PÉ-DE-MOLEQUE","PAÇOCA","QUINDIM","CAJUZINHO"]],["Dentro de casa",["GUARDA-ROUPA","LIQUIDIFICADOR","GELADEIRA","VENTILADOR","SOFÁ","TRAVESSEIRO"]],["Cidades brasileiras",["FLORIANÓPOLIS","CURITIBA","SALVADOR","BELÉM","FORTALEZA","GOIÂNIA"]],["Esportes",["FUTEBOL","VOLEIBOL","NATAÇÃO","BASQUETE","HANDEBOL","CICLISMO"]]];
+const FR=[["Frutas",["ABACAXI","MARACUJÁ","JABUTICABA","MORANGO","GOIABA","TANGERINA","BANANA","LARANJA","MELANCIA","MAMÃO","MANGA","UVA","PERA","MAÇÃ","LIMÃO","ABACATE","CAJU","CAJÁ","CUPUAÇU","AÇAÍ","ACEROLA","AMORA","FIGO","KIWI","COCO","PITANGA","GRAVIOLA","CARAMBOLA","NECTARINA","FRAMBOESA"]],["Animais",["BEIJA-FLOR","TATU-BOLA","JACARÉ","TAMANDUÁ","CAPIVARA","ARARA","ONÇA","TUCANO","MACACO","PREGUIÇA","LOBO-GUARÁ","BALEIA","COELHO","CAVALO","GOLFINHO","TARTARUGA","BORBOLETA","FORMIGA","ABELHA","COBRA","SAPO","GAVIÃO","CORUJA","PAPAGAIO","ELEFANTE","GIRAFA","LEOPARDO","PINGUIM","TUBARÃO","CACHORRO"]],["Instrumentos",["CAVAQUINHO","SANFONA","PANDEIRO","VIOLÃO","TAMBORIM","ZABUMBA","VIOLINO","PIANO","FLAUTA","GUITARRA","BATERIA","TROMPETE","SAXOFONE","CLARINETE","TROMBONE","HARPA","ACORDEÃO","BERIMBAU","SURDO","REPIQUE","CUÍCA","AGOGÔ","TRIÂNGULO","XILOFONE","TECLADO","CONTRABAIXO","VIOLONCELO","OBOÉ","GAITA","UKULELE"]],["Doces",["BRIGADEIRO","BEIJINHO","PÉ-DE-MOLEQUE","PAÇOCA","QUINDIM","CAJUZINHO","PUDIM","PAVÊ","ROCAMBOLE","BOLO","SORVETE","CHOCOLATE","BOMBOM","PIRULITO","GOIABADA","DOCE-DE-LEITE","CANJICA","PAMONHA","CUCA","ROSQUINHA","SONHO","CHURROS","MARIA-MOLE","COCADA","BANANADA","MOUSSE","TORTA","MANJAR","PANETONE","GELATINA"]],["Dentro de casa",["GUARDA-ROUPA","LIQUIDIFICADOR","GELADEIRA","VENTILADOR","SOFÁ","TRAVESSEIRO","FOGÃO","MICRO-ONDAS","TELEVISÃO","CAMA","COLCHÃO","CORTINA","TAPETE","ESPELHO","ABAJUR","LUSTRE","ESTANTE","MESA","CADEIRA","ARMÁRIO","PRATELEIRA","CHUVEIRO","TORNEIRA","PIA","VASO","TOALHA","VASSOURA","ASPIRADOR","BATEDEIRA","COBERTOR"]],["Cidades brasileiras",["FLORIANÓPOLIS","CURITIBA","SALVADOR","BELÉM","FORTALEZA","GOIÂNIA","MANAUS","RECIFE","NATAL","MACEIÓ","ARACAJU","VITÓRIA","CUIABÁ","PALMAS","BRASÍLIA","PORTO-ALEGRE","SANTOS","CAMPINAS","NITERÓI","OURO-PRETO","PARATY","GRAMADO","BONITO","OLINDA","PETRÓPOLIS","JOINVILLE","BLUMENAU","UBERLÂNDIA","LONDRINA","MARINGÁ"]],["Esportes",["FUTEBOL","VOLEIBOL","NATAÇÃO","BASQUETE","HANDEBOL","CICLISMO","TÊNIS","JUDÔ","KARATÊ","BOXE","ATLETISMO","GINÁSTICA","SURFE","SKATE","CANOAGEM","REMO","VELA","ESGRIMA","GOLFE","RÚGBI","BEISEBOL","HIPISMO","TIRO-COM-ARCO","TRIATLO","MARATONA","CAPOEIRA","FUTSAL","PATINAÇÃO","ESCALADA","MERGULHO"]],["Profissões",["BOMBEIRO","PROFESSOR","MÉDICO","ENFERMEIRO","ADVOGADO","ENGENHEIRO","PEDREIRO","PADEIRO","MOTORISTA","PILOTO","DENTISTA","COZINHEIRO","JORNALISTA","ARQUITETO","ELETRICISTA","ENCANADOR","MECÂNICO","FAZENDEIRO","PESCADOR","PROGRAMADOR","CARTEIRO","GARÇOM","CABELEIREIRO","VETERINÁRIO","FARMACÊUTICO","POLICIAL","JARDINEIRO","FOTÓGRAFO","ATOR","CIENTISTA"]],["Países",["BRASIL","ARGENTINA","URUGUAI","PARAGUAI","CHILE","PERU","COLÔMBIA","VENEZUELA","EQUADOR","BOLÍVIA","MÉXICO","CANADÁ","PORTUGAL","ESPANHA","FRANÇA","ITÁLIA","ALEMANHA","INGLATERRA","HOLANDA","SUÍÇA","JAPÃO","CHINA","ÍNDIA","EGITO","MARROCOS","ANGOLA","AUSTRÁLIA","RÚSSIA","TURQUIA","GRÉCIA"]],["Comidas",["FEIJOADA","MOQUECA","ACARAJÉ","COXINHA","PASTEL","TAPIOCA","CUSCUZ","CARURU","VATAPÁ","BAIÃO-DE-DOIS","PÃO-DE-QUEIJO","ESFIHA","KIBE","PIZZA","LASANHA","MACARRONADA","ESTROGONOFE","FAROFA","FEIJÃO","ARROZ","CHURRASCO","PICANHA","GALINHADA","EMPADÃO","EMPADA","BOBÓ","TUTU","MANDIOCA","POLENTA","HAMBÚRGUER"]],["Folclore brasileiro",["SACI","CURUPIRA","IARA","BOITATÁ","LOBISOMEM","BOTO","MAPINGUARI","BOI-BUMBÁ","CAIPORA","ANHANGÁ","FULOZINHA","TUTU-MARAMBÁ","HOMEM-DO-SACO","ALMA-PENADA","QUADRILHA","FESTA-JUNINA","CARRANCA","TEJU-JAGUÁ","BICHO-PAPÃO","BUMBA-MEU-BOI","MARACATU","FREVO","CAVALHADA","FOLIA-DE-REIS","CONGADA","CIRANDA","ASSOMBRAÇÃO","CORPO-SECO","CAPELOBO","JURUPARI"]],["Desenhos da TV brasileira",["PICA-PAU","SCOOBY-DOO","SNOOPY","THUNDERCATS","HE-MAN","SHE-RA","DRAGON-BALL","POKÉMON","DIGIMON","NARUTO","BAKUGAN","BATMAN","ALADDIN","POPEYE","JETSONS","MICKEY","PATETA","ANIMANIACS","TAZ-MANIA","TINY-TOONS","RUGRATS","JOHNNY-BRAVO","SPEED-RACER","DUCKTALES","SAILOR-MOON","YU-GI-OH","TOM-E-JERRY","BOB-ESPONJA","PEPPA-PIG","GARFIELD"]],["Parentes",["MÃE","PAI","FILHO","FILHA","IRMÃO","IRMÃ","AVÔ","AVÓ","TIO","TIA","PRIMO","PRIMA","SOBRINHO","SOBRINHA","NETO","NETA","GENRO","NORA","SOGRO","SOGRA","CUNHADO","CUNHADA","MADRASTA","PADRASTO","ENTEADO","ENTEADA","BISAVÔ","BISAVÓ","MADRINHA","PADRINHO"]],["Itens de papelaria",["LÁPIS","CANETA","BORRACHA","APONTADOR","RÉGUA","CADERNO","TESOURA","COLA","GRAMPEADOR","GRAMPO","CLIPE","PASTA","ENVELOPE","PAPEL","CARTOLINA","CORRETIVO","MARCA-TEXTO","ESQUADRO","TRANSFERIDOR","COMPASSO","MOCHILA","ESTOJO","AGENDA","FICHÁRIO","PRANCHETA","GIZ","CANETINHA","FITA-ADESIVA","PERFURADOR","CALCULADORA"]],["Materiais e ferramentas de construção",["CIMENTO","AREIA","TIJOLO","MARTELO","SERROTE","CHAVE-DE-FENDA","ALICATE","PREGO","PARAFUSO","TRENA","NÍVEL","PRUMO","ENXADA","BETONEIRA","FURADEIRA","SERRA","LIXADEIRA","BRITA","GESSO","AZULEJO","TELHA","PISO","VERGALHÃO","MADEIRA","TINTA","ROLO","PINCEL","ESPÁTULA","ARGAMASSA","CONCRETO"]]];
 const CORES=["#d7263d","#1f8a4c","#ffc82c","#7b3fc4","#f26b1d","#1aa0d8"];
 const SPECIAL={PASSA:["PASSA","#6b7280","#fff"],PERDEU:["PERDEU","#111111","#fff"],VOGAL:["VOGAL","#0e9f8e","#fff"],DOBRO:["x2","#e0457b","#fff"],BONUS:["+500","#ffb000","#2b1b00"]};
 const ORD=[300,"PASSA",800,150,"VOGAL",500,1000,250,"PERDEU",100,700,"DOBRO",400,50,600,"BONUS",200,1500,350,900];
@@ -100,24 +146,29 @@ function msg(t){G.m=t;$("msg").textContent=t}
 function init(){
   const gs=[...FR].sort(()=>Math.random()-.5).slice(0,3);
   const R=gs.map(([cat,ws])=>({cat,words:[...ws].sort(()=>Math.random()-.5).slice(0,3+(Math.random()*2|0))}));
-  G={r:0,k:0,n:0,R,p:[{n:"Jogador 1",s:0},{n:"Jogador 2",s:0}],cur:0,ph:"spin",val:0,rev:new Set(),used:new Set(),rot:0,m:""};
+  G={r:0,k:0,n:0,R,p:NAMES.map(n=>({n,s:0})),cur:0,ph:"spin",val:0,rev:new Set(),used:new Set(),rot:0,m:""};
   newWord();
 }
 function newWord(){
-  G.rev=new Set();G.used=new Set();G.cur=G.n%2;G.ph="spin";G.val=0;
+  G.rev=new Set();G.used=new Set();G.cur=G.n%G.p.length;G.ph="spin";G.val=0;
   msg("Rodada "+(G.r+1)+" de 3, com "+G.R[G.r].words.length+" palavras. Vez de "+G.p[G.cur].n+": gire a roda!");
   render();
 }
 const phrase=()=>G.R[G.r].words.join(" ");
 const letters=()=>[...new Set(norm(phrase()).replace(/[^A-Z]/g,""))];
 function render(){
-  $("pls").innerHTML=G.p.map((p,i)=>`<div class="pl ${i===G.cur&&G.ph!=="over"?"on":""}"><b>${p.n}</b><span>${p.s}</span></div>`).join("");
+  $("pls").innerHTML=G.p.map((p,i)=>`<div class="pl ${i===G.cur&&G.ph!=="over"?"on":""}" style="${G.p.length===1||(G.p.length===3&&i===2)?"grid-column:1/-1":""}"><b>${esc(p.n)}</b><span>${p.s}</span></div>`).join("");
   $("cat").innerHTML=`Rodada ${G.r+1} de 3 · ${G.R[G.r].words.length} palavras<br>Dica: <strong>${G.R[G.r].cat}</strong>`;
-  {const av=($("board").clientWidth||300)-16,n=Math.max(...G.R[G.r].words.map(w=>w.length));$("board").style.setProperty("--ts",Math.max(16,Math.min(30,Math.floor((av-(n-1)*3)/n)))+"px")}
+  {const av=($("board").clientWidth||300)-16,n=Math.max(...G.R[G.r].words.map(w=>w.length));$("board").style.setProperty("--ts",Math.max(16,Math.min(26,Math.floor((av-(n-1)*3)/n)))+"px")}
   $("board").innerHTML=phrase().split(" ").map(w=>`<div class="w">${[...w].map(ch=>{const n=norm(ch),show=G.rev.has(n)||!/[A-Z]/.test(n);return `<span class="t ${show?"on":(PEEK?"pk":"")}">${show||PEEK?ch:""}</span>`}).join("")}</div>`).join("");
   const sc=G.p[G.cur].s;
-  $("kb").innerHTML=[...ALF].map(l=>{const v=VOW.includes(l);const dis=G.used.has(l)||(v?(G.ph==="vogal"?false:(G.ph!=="spin"||sc<250)):G.ph!=="letter");return `<button data-l="${l}" class="${v?"v":""}" ${dis?"disabled":""}>${l}</button>`}).join("");
+  $("kb").innerHTML=[...ALF].map(l=>{const v=VOW.includes(l);const dis=G.used.has(l)||(v?(G.ph==="vogal"?false:(G.ph!=="buy"||sc<250)):G.ph!=="letter");return `<button data-l="${l}" class="${v?"v":""}" ${dis?"disabled":""}>${l}</button>`}).join("");
   $("spin").disabled=G.ph!=="spin";
+  $("buy").disabled=G.ph!=="spin"||G.p[G.cur].s<250||[...VOW].every(x=>G.used.has(x));
+  const kbOn=G.ph==="letter"||G.ph==="vogal"||G.ph==="buy";
+  $("pKb").classList.toggle("off",!kbOn);$("pWheel").classList.toggle("off",kbOn);
+  $("back").parentNode.style.display=G.ph==="buy"?"flex":"none";
+  $("valBar").textContent=G.ph==="letter"?"Cada letra vale "+G.val:G.ph==="vogal"?"Vogal grátis!":G.ph==="buy"?"Vogal custa 250":"";
   $("solve").disabled=G.ph!=="spin";
   $("next").style.display=G.ph==="over"?"block":"none";
   if(G.ph!=="spin")$("sv").classList.remove("show");
@@ -135,15 +186,16 @@ function draw(){
   ctx.save();ctx.translate(s/2,s/2);ctx.rotate(G.rot);
   SEG.forEach((g,i)=>{
     ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,i*a,(i+1)*a);ctx.closePath();
-    const gr=ctx.createRadialGradient(0,0,R*.12,0,0,R);gr.addColorStop(0,lite(g.c,.4));gr.addColorStop(1,g.c);ctx.fillStyle=gr;ctx.fill();ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=1.5;ctx.stroke();
+    const gr=ctx.createRadialGradient(0,0,R*.12,0,0,R);gr.addColorStop(0,lite(g.c,.4));gr.addColorStop(1,g.c);ctx.fillStyle=gr;ctx.fill();ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=1.5;ctx.stroke();if(G.hl!=null&&G.hl!==i){ctx.fillStyle="rgba(0,0,0,.6)";ctx.fill()}
     ctx.save();ctx.rotate((i+.5)*a);ctx.textAlign="right";ctx.fillStyle=g.t;
     ctx.font=`800 ${g.l.length>4?s/26:g.l.length>3?s/22:s/19}px system-ui,sans-serif`;ctx.textBaseline="middle";ctx.fillText(g.l,R-10,0);ctx.restore();
   });
+  if(G.hl!=null){const p=.5+.5*Math.sin(performance.now()/120);ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,G.hl*a,(G.hl+1)*a);ctx.closePath();ctx.lineWidth=4;ctx.strokeStyle="#fff";ctx.shadowColor="#ffd34d";ctx.shadowBlur=16+16*p;ctx.stroke();ctx.shadowBlur=0}
   ctx.beginPath();ctx.arc(0,0,s/13,0,7);ctx.fillStyle="#ffc82c";ctx.fill();ctx.beginPath();ctx.arc(0,0,s/22,0,7);ctx.fillStyle="#fff";ctx.fill();
   ctx.restore();
 }
 function next(){
-  G.cur=1-G.cur;G.ph="spin";G.val=0;
+  G.cur=(G.cur+1)%G.p.length;G.ph="spin";G.val=0;
   msg("Vez de "+G.p[G.cur].n+".");render();
 }
 function spin(f){
@@ -152,27 +204,29 @@ function spin(f){
   const a=2*Math.PI/SEG.length,idx=typeof f==="number"?f:Math.random()*SEG.length|0;
   const target=-Math.PI/2-(idx+.5)*a,base=G.rot;
   const delta=(((target-base)%(2*Math.PI))+2*Math.PI)%(2*Math.PI)+2*Math.PI*(5+(Math.random()*3|0));
-  const t0=performance.now(),dur=4200;let lastSeg=-1;
-  const ease=x=>1-Math.pow(1-x,3);
+  const t0=performance.now(),dur=6500;let lastSeg=-1,lt=0;const gid=G;
+  const ease=x=>1-Math.pow(1-x,4);
   (function step(now){
+    if(gid!==G)return;
     const x=Math.min(1,(now-t0)/dur);
     G.rot=base+delta*ease(x);draw();
     const si=Math.floor((((-Math.PI/2-G.rot)%(2*Math.PI))+2*Math.PI)%(2*Math.PI)/a);
-    if(si!==lastSeg){lastSeg=si;tone(1000-x*450,.03,.05)}
+    if(si!==lastSeg){lastSeg=si;if(now-lt>35){lt=now;tone(1000-x*450,.03,.05)}}
     if(x<1)return requestAnimationFrame(step);
-    const g=SEG[idx];
-    if(g.v==="PASSA"){sfx("passa");msg("Passa a vez!");next()}
-    else if(g.v==="PERDEU"){sfx("perdeu");G.p[G.cur].s=0;msg("Perdeu tudo! "+G.p[G.cur].n+" volta a zero.");next()}
-    else if(g.v==="VOGAL"){sfx("vitoria");if(VOW.split("").every(x=>G.used.has(x))){msg("Vogal grátis, mas todas as vogais já saíram! Gire de novo.");G.ph="spin";render()}else{G.ph="vogal";msg("Vogal grátis! Escolha uma vogal sem pagar.");render()}}
-    else if(g.v==="DOBRO"){sfx("vitoria");G.p[G.cur].s*=2;G.ph="spin";msg("Dobrou! "+G.p[G.cur].n+" agora tem "+G.p[G.cur].s+". Gire de novo.");render()}
-    else if(g.v==="BONUS"){sfx("vitoria");G.p[G.cur].s+=500;G.ph="spin";msg("Bônus de 500 pontos! Gire de novo.");render()}
-    else{sfx("ding");G.val=g.v;G.ph="letter";msg("Vale "+g.v+" por letra. Escolha uma consoante.");render()}
+    const g=SEG[idx];G.hl=idx;hlStart(g);setTimeout(()=>{if(gid!==G)return;G.hl=null;hideBadge();(()=>{
+    if(g.v==="PASSA"){msg("Passa a vez!");next()}
+    else if(g.v==="PERDEU"){G.p[G.cur].s=0;msg("Perdeu tudo! "+G.p[G.cur].n+" volta a zero.");next()}
+    else if(g.v==="VOGAL"){if(VOW.split("").every(x=>G.used.has(x))){msg("Vogal grátis, mas todas as vogais já saíram! Gire de novo.");G.ph="spin";render()}else{G.ph="vogal";msg("Vogal grátis! Escolha uma vogal sem pagar.");render()}}
+    else if(g.v==="DOBRO"){G.p[G.cur].s*=2;G.ph="spin";msg("Dobrou! "+G.p[G.cur].n+" agora tem "+G.p[G.cur].s+". Gire de novo.");render()}
+    else if(g.v==="BONUS"){G.p[G.cur].s+=500;G.ph="spin";msg("Bônus de 500 pontos! Gire de novo.");render()}
+    else{G.val=g.v;G.ph="letter";msg("Vale "+g.v+" por letra. Escolha uma consoante.");render()}
+    })();},HOLD);
   })(t0);
 }
 function done(){return letters().every(l=>G.rev.has(l))}
 function pick(l){
   const v=VOW.includes(l);
-  if(G.used.has(l)||(v&&G.ph!=="vogal"&&(G.ph!=="spin"||G.p[G.cur].s<250))||(!v&&G.ph!=="letter"))return;
+  if(G.used.has(l)||(v&&G.ph!=="vogal"&&(G.ph!=="buy"||G.p[G.cur].s<250))||(!v&&G.ph!=="letter"))return;
   G.used.add(l);
   const n=[...norm(phrase())].filter(c=>c===l).length,p=G.p[G.cur];
   if(v&&G.ph!=="vogal")p.s-=250;
@@ -207,11 +261,11 @@ $("kb").onclick=e=>{const b=e.target.closest("button");if(b)pick(b.dataset.l)};
 $("next").onclick=()=>{
   G.n++;
   if(G.r<2){G.r++;newWord();return}
-  const [a,b]=G.p;
-  const w=a.s===b.s?"Empate!":(a.s>b.s?a.n:b.n)+" venceu!";
+  const top=Math.max(...G.p.map(p=>p.s)),ws=G.p.filter(p=>p.s===top);
+  const w=G.p.length===1?"Fim de jogo!":ws.length>1?"Empate entre "+ws.map(p=>p.n).join(" e ")+"!":ws[0].n+" venceu!";
   G.ph="final";$("next").textContent="Jogar de novo";
   $("next").onclick=()=>{$("next").onclick=nextHandler;init()};
-  msg(w+" "+a.n+": "+a.s+" · "+b.n+": "+b.s);render();$("next").style.display="block";
+  msg(w+" "+G.p.map(p=>p.n+": "+p.s).join(" · "));render();$("next").style.display="block";
 };
 const nextHandler=$("next").onclick;
 $("dSeg").innerHTML=SEG.map((g,i)=>`<option value="${i}">${g.l} (casa ${i+1})</option>`).join("");
@@ -225,6 +279,8 @@ $("dZero").onclick=()=>{G.p[G.cur].s=0;render()};
 $("dForce").onclick=()=>{if(G.ph==="spin")spin(+$("dSeg").value);else msg("Só dá para girar quando for a hora de girar.")};
 $("dSet").onclick=()=>{const w=$("dW").value.trim().toUpperCase();if(!w||busy())return;G.R[G.r]={cat:$("dCat").value.trim()||"Teste",words:w.split(/\s+/)};G.rev=new Set();G.used=new Set();G.ph="spin";G.val=0;msg("Palavras de teste definidas. Vez de "+G.p[G.cur].n+".");render()};
 $("dReset").onclick=()=>{$("next").onclick=nextHandler;init()};
+$("dCatSel").innerHTML=FR.map((c,i)=>`<option value="${i}">${c[0]} (${c[1].length})</option>`).join("");
+$("dCatGo").onclick=()=>{if(busy())return;const [cat,ws]=FR[+$("dCatSel").value];G.R[G.r]={cat,words:[...ws].sort(()=>Math.random()-.5).slice(0,3+(Math.random()*2|0))};G.rev=new Set();G.used=new Set();G.ph="spin";G.val=0;msg("Categoria de teste: "+cat+". Vez de "+G.p[G.cur].n+".");render()};
 let AC=null,SFX=true,MUS=false,musT=null,ms=0;
 function ac(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume()}catch(e){}return AC}
 function note(f,d,ty,v,t0,mus){if(!(mus?MUS:SFX))return;const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+t0;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.02)}
@@ -240,8 +296,27 @@ document.addEventListener("pointerdown",()=>ac());
 $("bMus").onclick=()=>setMusic(!MUS);
 $("bSfx").onclick=()=>{SFX=!SFX;$("bSfx").textContent="Efeitos: "+(SFX?"ligados":"desligados");sfx("ding")};
 document.addEventListener("visibilitychange",()=>{clearInterval(musT);if(!document.hidden&&MUS)musT=setInterval(musicTick,230)});
-window.addEventListener("resize",render);
-init();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let NP=2,TYPED=["","","",""],NAMES=["Jogador 1","Jogador 2"];
+function buildHome(){
+  $("cnt").innerHTML=[1,2,3,4].map(n=>`<button data-n="${n}" class="${n===NP?"sel":""}">${n}</button>`).join("");
+  $("names").innerHTML=[...Array(NP)].map((_,i)=>`<input maxlength="12" data-i="${i}" placeholder="Jogador ${i+1}" value="${esc(TYPED[i])}" autocomplete="off">`).join("");
+}
+function goHome(){G=Object.assign({},G);$("game").hidden=true;$("home").hidden=false;buildHome();window.scrollTo(0,0)}
+$("cnt").onclick=e=>{const b=e.target.closest("button");if(b){NP=+b.dataset.n;buildHome()}};
+$("names").oninput=e=>{TYPED[+e.target.dataset.i]=e.target.value};
+$("go").onclick=()=>{NAMES=[...Array(NP)].map((_,i)=>TYPED[i].trim()||"Jogador "+(i+1));$("home").hidden=true;$("game").hidden=false;init()};
+const HOLD=2300;
+const TXT={PASSA:["PASSA","A VEZ"],PERDEU:["PERDEU","TUDO"],VOGAL:["VOGAL","GRÁTIS"],DOBRO:["PONTOS","x2"],BONUS:["BÔNUS","+500"]};
+function showBadge(g){const t=TXT[g.v];$("badge").innerHTML=t?`<small>${t[0]}</small><b>${t[1]}</b>`:`<small>cada letra vale</small><b>${g.l}</b>`;$("badge").className="badge on"}
+function hideBadge(){$("badge").className="badge"}
+function hlLoop(){if(G&&G.hl!=null){draw();requestAnimationFrame(hlLoop)}}
+function hlStart(g){showBadge(g);hlLoop();sfx(g.v==="PASSA"?"passa":g.v==="PERDEU"?"perdeu":typeof g.v==="number"?"ding":"vitoria")}
+$("bHome").onclick=goHome;
+$("buy").onclick=()=>{if(G.ph==="spin"){G.ph="buy";msg("Escolha a vogal (custa 250 pontos).");render()}};
+$("back").onclick=()=>{if(G.ph==="buy"){G.ph="spin";msg("Gire a roda ou resolva.");render()}};
+window.addEventListener("resize",()=>{if(G&&G.p&&!$("game").hidden)render()});
+buildHome();
 </script>
 </body>
 </html>
