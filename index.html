@@ -46,6 +46,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-off
 .sv input{flex:1;min-width:0;padding:11px;border-radius:8px;border:0;font:inherit;text-transform:uppercase}
 .t.pk{color:rgba(255,255,255,.5)}
 [hidden]{display:none!important}
+.pl i{display:block;font-style:normal;font-size:12px;color:var(--mut)}
 .badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;background:rgba(8,18,58,.92);border:3px solid var(--ac);border-radius:16px;padding:8px 14px;text-align:center;color:#fff;transition:transform .25s,opacity .25s;white-space:nowrap}
 .badge.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .badge small{display:block;font-size:12px;font-weight:700;color:var(--ac);text-transform:uppercase}
@@ -110,7 +111,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-off
 <div class="row"><button class="big sec" id="back">Voltar à roda</button></div>
 </div>
 </div>
-<div class="hint">Consoantes: gire e escolha. Vogais custam 250 pontos. Resolver certo vale 500 de bônus. Casas especiais: VOGAL (vogal grátis), x2 (dobra seus pontos) e +500 (bônus).</div>
+<div class="hint">Cada consoante certa soma (letras x valor da roleta) aos pontos da rodada, e só quem acerta a palavra leva esses pontos para o placar. Vogais custam 250 dos pontos da rodada. Casas especiais: VOGAL (grátis), x2 (dobra os pontos da rodada), +500 (bônus) e PERDEU (zera os pontos da rodada). Cada rodada vale mais: x1, x2 e x3.</div>
 <details class="dbg"><summary>Modo teste</summary>
 <div class="g">
 <button id="dPeek" class="full">Espiar palavra: desligado</button>
@@ -145,30 +146,30 @@ let G,PEEK=false;
 function msg(t){G.m=t;$("msg").textContent=t}
 function init(){
   const gs=[...FR].sort(()=>Math.random()-.5).slice(0,3);
-  const R=gs.map(([cat,ws])=>({cat,words:[...ws].sort(()=>Math.random()-.5).slice(0,3+(Math.random()*2|0))}));
+  const R=gs.map(([cat,ws],ri)=>({cat,words:[...ws].sort(()=>Math.random()-.5).slice(0,ri===0?3:4)}));
   G={r:0,k:0,n:0,R,p:NAMES.map(n=>({n,s:0})),cur:0,ph:"spin",val:0,rev:new Set(),used:new Set(),rot:0,m:""};
   newWord();
 }
 function newWord(){
-  G.rev=new Set();G.used=new Set();G.cur=G.n%G.p.length;G.ph="spin";G.val=0;
-  msg("Rodada "+(G.r+1)+" de 3, com "+G.R[G.r].words.length+" palavras. Vez de "+G.p[G.cur].n+": gire a roda!");
+  G.rev=new Set();G.used=new Set();G.cur=G.n%G.p.length;G.pot=G.p.map(()=>0);G.ph="spin";G.val=0;
+  msg("Rodada "+(G.r+1)+" de 3, com "+G.R[G.r].words.length+" palavras"+(G.r?" e valores x"+(G.r+1):"")+". Vez de "+G.p[G.cur].n+": gire a roda!");
   render();
 }
 const phrase=()=>G.R[G.r].words.join(" ");
 const letters=()=>[...new Set(norm(phrase()).replace(/[^A-Z]/g,""))];
 function render(){
-  $("pls").innerHTML=G.p.map((p,i)=>`<div class="pl ${i===G.cur&&G.ph!=="over"?"on":""}" style="${G.p.length===1||(G.p.length===3&&i===2)?"grid-column:1/-1":""}"><b>${esc(p.n)}</b><span>${p.s}</span></div>`).join("");
-  $("cat").innerHTML=`Rodada ${G.r+1} de 3 · ${G.R[G.r].words.length} palavras<br>Dica: <strong>${G.R[G.r].cat}</strong>`;
+  $("pls").innerHTML=G.p.map((p,i)=>`<div class="pl ${i===G.cur&&G.ph!=="over"?"on":""}" style="${G.p.length===1||(G.p.length===3&&i===2)?"grid-column:1/-1":""}"><b>${esc(p.n)}</b><span>${p.s}</span><i>rodada: ${G.pot[i]}</i></div>`).join("");
+  $("cat").innerHTML=`Rodada ${G.r+1} de 3 · valores x${G.r+1} · ${G.R[G.r].words.length} palavras<br>Dica: <strong>${G.R[G.r].cat}</strong>`;
   {const av=($("board").clientWidth||300)-16,n=Math.max(...G.R[G.r].words.map(w=>w.length));$("board").style.setProperty("--ts",Math.max(16,Math.min(26,Math.floor((av-(n-1)*3)/n)))+"px")}
   $("board").innerHTML=phrase().split(" ").map(w=>`<div class="w">${[...w].map(ch=>{const n=norm(ch),show=G.rev.has(n)||!/[A-Z]/.test(n);return `<span class="t ${show?"on":(PEEK?"pk":"")}">${show||PEEK?ch:""}</span>`}).join("")}</div>`).join("");
-  const sc=G.p[G.cur].s;
+  const sc=G.pot[G.cur];
   $("kb").innerHTML=[...ALF].map(l=>{const v=VOW.includes(l);const dis=G.used.has(l)||(v?(G.ph==="vogal"?false:(G.ph!=="buy"||sc<250)):G.ph!=="letter");return `<button data-l="${l}" class="${v?"v":""}" ${dis?"disabled":""}>${l}</button>`}).join("");
   $("spin").disabled=G.ph!=="spin";
-  $("buy").disabled=G.ph!=="spin"||G.p[G.cur].s<250||[...VOW].every(x=>G.used.has(x));
+  $("buy").disabled=G.ph!=="spin"||G.pot[G.cur]<250||[...VOW].every(x=>G.used.has(x));
   const kbOn=G.ph==="letter"||G.ph==="vogal"||G.ph==="buy";
   $("pKb").classList.toggle("off",!kbOn);$("pWheel").classList.toggle("off",kbOn);
   $("back").parentNode.style.display=G.ph==="buy"?"flex":"none";
-  $("valBar").textContent=G.ph==="letter"?"Cada letra vale "+G.val:G.ph==="vogal"?"Vogal grátis!":G.ph==="buy"?"Vogal custa 250":"";
+  $("valBar").textContent=G.ph==="letter"?"Escolha uma consoante":G.ph==="vogal"?"Vogal grátis!":G.ph==="buy"?"Vogal custa 250":"";
   $("solve").disabled=G.ph!=="spin";
   $("next").style.display=G.ph==="over"?"block":"none";
   if(G.ph!=="spin")$("sv").classList.remove("show");
@@ -188,7 +189,7 @@ function draw(){
     ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,i*a,(i+1)*a);ctx.closePath();
     const gr=ctx.createRadialGradient(0,0,R*.12,0,0,R);gr.addColorStop(0,lite(g.c,.4));gr.addColorStop(1,g.c);ctx.fillStyle=gr;ctx.fill();ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=1.5;ctx.stroke();if(G.hl!=null&&G.hl!==i){ctx.fillStyle="rgba(0,0,0,.6)";ctx.fill()}
     ctx.save();ctx.rotate((i+.5)*a);ctx.textAlign="right";ctx.fillStyle=g.t;
-    ctx.font=`800 ${g.l.length>4?s/26:g.l.length>3?s/22:s/19}px system-ui,sans-serif`;ctx.textBaseline="middle";ctx.fillText(g.l,R-10,0);ctx.restore();
+    const L=lab(g);ctx.font=`800 ${L.length>4?s/26:L.length>3?s/22:s/19}px system-ui,sans-serif`;ctx.textBaseline="middle";ctx.fillText(L,R-10,0);ctx.restore();
   });
   if(G.hl!=null){const p=.5+.5*Math.sin(performance.now()/120);ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,G.hl*a,(G.hl+1)*a);ctx.closePath();ctx.lineWidth=4;ctx.strokeStyle="#fff";ctx.shadowColor="#ffd34d";ctx.shadowBlur=16+16*p;ctx.stroke();ctx.shadowBlur=0}
   ctx.beginPath();ctx.arc(0,0,s/13,0,7);ctx.fillStyle="#ffc82c";ctx.fill();ctx.beginPath();ctx.arc(0,0,s/22,0,7);ctx.fillStyle="#fff";ctx.fill();
@@ -215,34 +216,34 @@ function spin(f){
     if(x<1)return requestAnimationFrame(step);
     const g=SEG[idx];G.hl=idx;hlStart(g);setTimeout(()=>{if(gid!==G)return;G.hl=null;hideBadge();(()=>{
     if(g.v==="PASSA"){msg("Passa a vez!");next()}
-    else if(g.v==="PERDEU"){G.p[G.cur].s=0;msg("Perdeu tudo! "+G.p[G.cur].n+" volta a zero.");next()}
+    else if(g.v==="PERDEU"){G.pot[G.cur]=0;msg("Perdeu tudo! "+G.p[G.cur].n+" perde os pontos da rodada.");next()}
     else if(g.v==="VOGAL"){if(VOW.split("").every(x=>G.used.has(x))){msg("Vogal grátis, mas todas as vogais já saíram! Gire de novo.");G.ph="spin";render()}else{G.ph="vogal";msg("Vogal grátis! Escolha uma vogal sem pagar.");render()}}
-    else if(g.v==="DOBRO"){G.p[G.cur].s*=2;G.ph="spin";msg("Dobrou! "+G.p[G.cur].n+" agora tem "+G.p[G.cur].s+". Gire de novo.");render()}
-    else if(g.v==="BONUS"){G.p[G.cur].s+=500;G.ph="spin";msg("Bônus de 500 pontos! Gire de novo.");render()}
-    else{G.val=g.v;G.ph="letter";msg("Vale "+g.v+" por letra. Escolha uma consoante.");render()}
+    else if(g.v==="DOBRO"){G.pot[G.cur]*=2;G.ph="spin";msg("Dobrou os pontos da rodada! Gire de novo.");render()}
+    else if(g.v==="BONUS"){G.pot[G.cur]+=500;G.ph="spin";msg("Bônus de 500 nos pontos da rodada! Gire de novo.");render()}
+    else{G.val=g.v*(G.r+1);G.ph="letter";msg("Escolha uma consoante.");render()}
     })();},HOLD);
   })(t0);
 }
 function done(){return letters().every(l=>G.rev.has(l))}
 function pick(l){
   const v=VOW.includes(l);
-  if(G.used.has(l)||(v&&G.ph!=="vogal"&&(G.ph!=="buy"||G.p[G.cur].s<250))||(!v&&G.ph!=="letter"))return;
+  if(G.used.has(l)||(v&&G.ph!=="vogal"&&(G.ph!=="buy"||G.pot[G.cur]<250))||(!v&&G.ph!=="letter"))return;
   G.used.add(l);
   const n=[...norm(phrase())].filter(c=>c===l).length,p=G.p[G.cur];
-  if(v&&G.ph!=="vogal")p.s-=250;
+  if(v&&G.ph!=="vogal")G.pot[G.cur]-=250;
   if(n>0){
     G.rev.add(l);sfx("acerto");
-    if(!v)p.s+=G.val*n;
+    if(!v)G.pot[G.cur]+=G.val*n;
     G.ph="spin";
-    if(done()){return end(G.cur,false)}
-    msg(`Tem ${n} letra ${l}${v?"":" (+"+G.val*n+")"}. Continue: gire de novo ou resolva.`);render();
+    if(done()){return end(G.cur,true)}
+    msg(`Tem ${n} letra ${l}. Continue: gire de novo ou resolva.`);render();
   }else{sfx("erro");msg("Não tem a letra "+l+".");next()}
 }
 function end(w,bonus){
-  if(bonus)G.p[w].s+=500;
+  const won=G.pot[w];if(bonus)G.p[w].s+=won;
   letters().forEach(l=>G.rev.add(l));
-  G.ph="over";sfx(bonus?"vitoria":"ding");
-  msg(bonus?G.p[w].n+" acertou e ganha 500 de bônus!":"Todas as letras apareceram!");
+  G.ph="over";if(bonus)fanfare();else sfx("ding");
+  msg(bonus?G.p[w].n+" acertou a palavra e leva "+won+" pontos da rodada!":"Rodada encerrada.");
   $("next").textContent=G.r<2?"Próxima rodada":"Ver resultado";
   render();
 }
@@ -306,9 +307,14 @@ function goHome(){G=Object.assign({},G);$("game").hidden=true;$("home").hidden=f
 $("cnt").onclick=e=>{const b=e.target.closest("button");if(b){NP=+b.dataset.n;buildHome()}};
 $("names").oninput=e=>{TYPED[+e.target.dataset.i]=e.target.value};
 $("go").onclick=()=>{NAMES=[...Array(NP)].map((_,i)=>TYPED[i].trim()||"Jogador "+(i+1));$("home").hidden=true;$("game").hidden=false;init()};
+const lab=g=>typeof g.v==="number"?String(g.v*(((G&&G.r)||0)+1)):g.l;
+function fanfare(){
+  const S=[[523,.14,0],[659,.14,.14],[784,.14,.28],[1047,.34,.42],[784,.14,.9],[1047,.6,1.04],[1319,.14,1.8],[1175,.14,1.95],[1319,.14,2.1],[1568,.9,2.25]];
+  S.forEach(([f,d,t])=>{note(f,d,"square",.06,t,false);note(f/2,d,"triangle",.07,t,false)});
+}
 const HOLD=2300;
 const TXT={PASSA:["PASSA","A VEZ"],PERDEU:["PERDEU","TUDO"],VOGAL:["VOGAL","GRÁTIS"],DOBRO:["PONTOS","x2"],BONUS:["BÔNUS","+500"]};
-function showBadge(g){const t=TXT[g.v];$("badge").innerHTML=t?`<small>${t[0]}</small><b>${t[1]}</b>`:`<small>cada letra vale</small><b>${g.l}</b>`;$("badge").className="badge on"}
+function showBadge(g){const t=TXT[g.v];$("badge").innerHTML=t?`<small>${t[0]}</small><b>${t[1]}</b>`:`<small>cada letra vale</small><b>${lab(g)}</b>`;$("badge").className="badge on"}
 function hideBadge(){$("badge").className="badge"}
 function hlLoop(){if(G&&G.hl!=null){draw();requestAnimationFrame(hlLoop)}}
 function hlStart(g){showBadge(g);hlLoop();sfx(g.v==="PASSA"?"passa":g.v==="PERDEU"?"perdeu":typeof g.v==="number"?"ding":"vitoria")}
